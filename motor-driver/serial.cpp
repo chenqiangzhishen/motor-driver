@@ -26,12 +26,12 @@ DWORD WINAPI CommProc(LPVOID lpParam) {
 
 	CSerial* pSerial = (CSerial*)lpParam;
 
-	//清空串口  
+	//清空串口
 	PurgeComm(pSerial->m_hComm, PURGE_RXCLEAR | PURGE_TXCLEAR);
 
 	char buf[512];
 	DWORD dwRead;
-	
+
 	while (pSerial->m_hComm != INVALID_HANDLE_VALUE) {
 		BOOL bReadOK = ReadFile(pSerial->m_hComm, buf, 512, &dwRead, NULL);
 		//printf("[in CommProc function]: COM1 buf=%s \n", buf);
@@ -40,8 +40,6 @@ DWORD WINAPI CommProc(LPVOID lpParam) {
 			strcpy_s(pSerial->m_rxdata, buf);
 		    //printf("[in CommProc function]: COM1 buf=%s \n", buf);
 			printf("[in CommProc function]: COM1 pSerial->m_rxdata=%s \n", pSerial->m_rxdata);
-			
-			
 
 			//MessageBoxA(NULL, buf, "串口收到数据", MB_OK);
 		}
@@ -80,8 +78,8 @@ return 0;
 ********************************************************************************************/
 BOOL CSerial::OpenSerialPort(TCHAR* port, UINT baud_rate, BYTE date_bits, BYTE stop_bit, BYTE parity)
 {
-	//打开串口  
-	m_hComm = CreateFile(port, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);//独占方式打开串口  
+	//打开串口
+	m_hComm = CreateFile(port, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);//独占方式打开串口
 
 	TCHAR err[512];
 
@@ -91,52 +89,52 @@ BOOL CSerial::OpenSerialPort(TCHAR* port, UINT baud_rate, BYTE date_bits, BYTE s
 		return FALSE;
 	}
 
-	//MessageBox(NULL,_T("打开成功"),_T("提示"),MB_OK);  
+	//MessageBox(NULL,_T("打开成功"),_T("提示"),MB_OK);
 
-	//获取串口默认配置  
+	//获取串口默认配置
 	DCB dcb;
 	if (!GetCommState(m_hComm, &dcb)) {
 		MessageBox(NULL, _T("获取串口当前属性参数失败"), _T("提示"), MB_OK);
 	}
 
-	//配置串口参数  
-	dcb.BaudRate = baud_rate;  //波特率  
-	dcb.fBinary = TRUE;            //二进制模式。必须为TRUE  
-	dcb.ByteSize = date_bits;  //数据位。范围4-8  
-	dcb.StopBits = stop_bit; //停止位  
+	//配置串口参数
+	dcb.BaudRate = baud_rate;  //波特率
+	dcb.fBinary = TRUE;            //二进制模式。必须为TRUE
+	dcb.ByteSize = date_bits;  //数据位。范围4-8
+	dcb.StopBits = stop_bit; //停止位
 
 	if (parity == NOPARITY) {
-		dcb.fParity = FALSE;   //奇偶校验。无奇偶校验  
-		dcb.Parity = parity;   //校验模式。无奇偶校验  
+		dcb.fParity = FALSE;   //奇偶校验。无奇偶校验
+		dcb.Parity = parity;   //校验模式。无奇偶校验
 	}
 	else {
-		dcb.fParity = TRUE;        //奇偶校验。  
-		dcb.Parity = parity;   //校验模式。无奇偶校验  
+		dcb.fParity = TRUE;        //奇偶校验
+		dcb.Parity = parity;   //校验模式。无奇偶校验
 	}
 
-	dcb.fOutxCtsFlow = FALSE;  //CTS线上的硬件握手  
-	dcb.fOutxDsrFlow = FALSE;  //DST线上的硬件握手  
-	dcb.fDtrControl = DTR_CONTROL_ENABLE;//DTR控制  
+	dcb.fOutxCtsFlow = FALSE;  //CTS线上的硬件握手
+	dcb.fOutxDsrFlow = FALSE;  //DST线上的硬件握手
+	dcb.fDtrControl = DTR_CONTROL_ENABLE;//DTR控制
 	dcb.fDsrSensitivity = FALSE;
-	dcb.fTXContinueOnXoff = FALSE;//  
-	dcb.fOutX = FALSE;         //是否使用XON/XOFF协议  
-	dcb.fInX = FALSE;          //是否使用XON/XOFF协议  
-	dcb.fErrorChar = FALSE;        //是否使用发送错误协议  
-	dcb.fNull = FALSE;         //停用null stripping  
-	dcb.fRtsControl = RTS_CONTROL_ENABLE;//  
-	dcb.fAbortOnError = FALSE; //串口发送错误，并不终止串口读写  
+	dcb.fTXContinueOnXoff = FALSE;
+	dcb.fOutX = FALSE;         //是否使用XON/XOFF协议
+	dcb.fInX = FALSE;          //是否使用XON/XOFF协议
+	dcb.fErrorChar = FALSE;        //是否使用发送错误协议
+	dcb.fNull = FALSE;         //停用null stripping
+	dcb.fRtsControl = RTS_CONTROL_ENABLE;
+	dcb.fAbortOnError = FALSE; //串口发送错误，并不终止串口读写
 
-							   //设置串口参数  
+							   //设置串口参数
 	if (!SetCommState(m_hComm, &dcb)) {
 		MessageBox(NULL, _T("设置串口参数失败"), _T("提示"), MB_OK);
 		return FALSE;
 	}
 
-	//设置串口事件  
-	SetCommMask(m_hComm, EV_RXCHAR);//在缓存中有字符时产生事件  
+	//设置串口事件
+	SetCommMask(m_hComm, EV_RXCHAR);//在缓存中有字符时产生事件
 	SetupComm(m_hComm, 16384, 16384);
 
-	//设置串口读写时间  
+	//设置串口读写时间
 	COMMTIMEOUTS CommTimeOuts;
 	GetCommTimeouts(m_hComm, &CommTimeOuts);
 	CommTimeOuts.ReadIntervalTimeout = MAXDWORD;
@@ -150,7 +148,7 @@ BOOL CSerial::OpenSerialPort(TCHAR* port, UINT baud_rate, BYTE date_bits, BYTE s
 		return FALSE;
 	}
 
-	//创建线程，读取数据  
+	//创建线程，读取数据
 	HANDLE hReadCommThread = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommProc, (LPVOID)this, 0, NULL);
 	return TRUE;
 }
@@ -164,14 +162,14 @@ BOOL CSerial::SendData(char* data, int len) {
 		return FALSE;
 	}
 
-	//清空串口  
+	//清空串口
 	PurgeComm(m_hComm, PURGE_RXCLEAR | PURGE_TXCLEAR);
 
-	//写串口  
+	//写串口
 	DWORD dwWrite = 0;
 	DWORD dwRet = WriteFile(m_hComm, data, len, &dwWrite, NULL);
 
-	//清空串口  
+	//清空串口
 	PurgeComm(m_hComm, PURGE_RXCLEAR | PURGE_TXCLEAR);
 
 	if (!dwRet) {

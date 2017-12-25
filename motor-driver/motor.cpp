@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "motor.h"
 #include "Serial.h"
-#include <windows.h>  
+#include <windows.h>
 #include "tchar.h"
 
 void MotorWrite(CSerial &serial, unsigned char address, unsigned char data) {

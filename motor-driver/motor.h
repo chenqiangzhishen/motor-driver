@@ -1,5 +1,5 @@
 #pragma once
-#include "Serial.h" 
+#include "Serial.h"
 
 #define U8 unsigned char
 #define MotorWaitWriteFinish()      while(MotorBoard_Read_FLAG & 0x02);

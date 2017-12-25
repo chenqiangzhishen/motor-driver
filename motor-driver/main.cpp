@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include <windows.h>  
-#include "serial.h"  
+#include <windows.h>
+#include "serial.h"
 #include "motor.h"
 #include "tchar.h"
 #include <string>

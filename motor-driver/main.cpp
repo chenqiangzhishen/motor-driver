@@ -17,7 +17,7 @@ int main(int argc, _TCHAR* argv[])
 	int delay_time = 5000;
 	U8  direction = 1;
 
-	serial.OpenSerialPort(_T("COM3:"), 115200, 8, ONE5STOPBITS);  //打开串口后，自动接收数据  
+	serial.OpenSerialPort(_T("COM3:"), 115200, 8);  //打开串口后，自动接收数据
 	//要进行两次复位，第一次上电初始化马达的全局控制寄存器
 	MotorWrite(serial, 0x00, 0x00);
 	//第二次上电初始化马达的全局控制寄存器

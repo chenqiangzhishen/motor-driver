@@ -1,6 +1,6 @@
-#include"StdAfx.h"  
-#include"serial.h"  
-#include<process.h>  
+#include "StdAfx.h"
+#include "serial.h"
+#include <process.h>
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -31,14 +31,21 @@ DWORD WINAPI CommProc(LPVOID lpParam) {
 
 	char buf[512];
 	DWORD dwRead;
+	
 	while (pSerial->m_hComm != INVALID_HANDLE_VALUE) {
 		BOOL bReadOK = ReadFile(pSerial->m_hComm, buf, 512, &dwRead, NULL);
+		//printf("[in CommProc function]: COM1 buf=%s \n", buf);
 		if (bReadOK && (dwRead > 0)) {
 			buf[dwRead] = '\0';
 			strcpy_s(pSerial->m_rxdata, buf);
+		    //printf("[in CommProc function]: COM1 buf=%s \n", buf);
+			printf("[in CommProc function]: COM1 pSerial->m_rxdata=%s \n", pSerial->m_rxdata);
+			
+			
 
 			//MessageBoxA(NULL, buf, "串口收到数据", MB_OK);
 		}
+
 	}
 	return 0;
 }
@@ -96,7 +103,7 @@ BOOL CSerial::OpenSerialPort(TCHAR* port, UINT baud_rate, BYTE date_bits, BYTE s
 	dcb.BaudRate = baud_rate;  //波特率  
 	dcb.fBinary = TRUE;            //二进制模式。必须为TRUE  
 	dcb.ByteSize = date_bits;  //数据位。范围4-8  
-	dcb.StopBits = ONESTOPBIT; //停止位  
+	dcb.StopBits = stop_bit; //停止位  
 
 	if (parity == NOPARITY) {
 		dcb.fParity = FALSE;   //奇偶校验。无奇偶校验  
@@ -177,36 +184,17 @@ BOOL CSerial::SendData(char* data, int len) {
 unsigned char CSerial::ReceiveData() {
 
 	int rx_value = 0;
-	char buffer[20];
-
-	unsigned int x;
 	unsigned char ret;
 
-
-	//创建线程，读取数据  
-	//TODO: new add
-	//HANDLE hReadCommThread = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommProc, (LPVOID) this, 0, NULL);  
-	Sleep(20);
 	std::string rxdata = m_rxdata;
 
 	printf("COM1 serial.m_rxdata=%s \n", m_rxdata);
-	//MessageBoxA(NULL, rxdata.c_str() , "串口收到数据", MB_OK);
 	std::size_t found_begin = rxdata.find('<');
 	std::size_t found = rxdata.find_last_of('>');
 	if (found_begin != std::string::npos && found != std::string::npos) {
-		//MessageBoxA(NULL, rxdata.substr(rxdata.find(',')+1, 4).c_str(), "substr串口收到数据", MB_OK);
-
 		ret = (unsigned char)std::stoul(rxdata.substr(found - 4, 4).c_str(), nullptr, 16);
 		printf("COM1 (unsigned char)serial.m_rxdata=%d \n", ret);
 		return ret;
-		//return (unsigned char)std::stoul(rxdata.substr(rxdata.find(',') + 1, 4).c_str(), nullptr, 16);
-		//rx_value = (unsigned char)std::stoul(rxdata.substr(rxdata.find(',') + 1, 4).c_str(), nullptr, 16);
-		//rx_value= unsigned char(x);
-		//rx_value= atoi(x);
-
-		//_itoa_s(rx_value, buffer, 20, 10);
-		//MessageBoxA(NULL, buffer, "串口收到数据", MB_OK);
 	}
-	//MessageBoxA(NULL, m_rxdata, "串口收到数据", MB_OK);
 	return 0;
 }

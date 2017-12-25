@@ -20,24 +20,13 @@ void MotorWriteTest(CSerial &serial) {
 	char str[30];
 	int size = 0;
 
-	//	size = sprintf_s(str, "<send 0x%02x 0x%02x>", 0x80 | address, data);
-	serial.SendData("<version>", 10);
-	Sleep(20);
+	size = sprintf_s(str, "<%s>", "version");
+	serial.SendData(str, size);
+	printf("test version is %s \n", str);
+	Sleep(200);
 }
 
 unsigned char MotorRead(CSerial &serial, unsigned char address) {
-	/*
-	CSerial serial;
-	std::string cmd_prefix = std::string("<send ");
-	std::string addr = std::to_string(0x80 | address);
-	std::string space = std::string(" ");
-	std::string data_s = std::to_string(data);
-	std::string cmd_subfix = std::string(">");
-	std::string state = cmd_prefix + addr + space + data_s + cmd_subfix;
-	char* str = new char[state.length() + 1];
-	strcpy_s(str, state.c_str());
-	serial.SendData(str, strlen(str));
-	*/
 
 	char str[30];
 	int size = 0;
@@ -45,24 +34,9 @@ unsigned char MotorRead(CSerial &serial, unsigned char address) {
 
 	size = sprintf_s(str, "<send 0x%02x 0x%02x,0x%02x 0x%02x>", address, 0xff, 0xff, 0xff);
 	serial.SendData(str, size);
-	Sleep(20);
+	Sleep(50);
 	ret_val = serial.ReceiveData();
 	return ret_val;
-	//return 0;
-
-
-	/*
-	MotorBoard_ADDR = (0x7f & address); \
-	MotorBoard_DATA = (0x00);           \
-	MotorWaitWriteFinish(); \
-	Delay(1);   \
-	MotorBoard_ADDR = (0x7f & address); \
-	MotorBoard_DATA = (0x00);           \
-	MotorWaitWriteFinish(); \
-	Delay(1);   \
-	*data = MotorBoard_DATA;
-
-	*/
 }
 
 void LeftRightMdStop(CSerial &serial)

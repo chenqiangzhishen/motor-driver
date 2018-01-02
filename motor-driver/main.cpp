@@ -51,10 +51,10 @@ int main(int argc, _TCHAR* argv[])
 	}
 	*/
 	while (1) {
+		printf("------------------------begin\n");
 		//LeftRightMdMove(serial, 100, 0);
 
 		MotorWriteTest(serial);
-		serial.ReceiveData();
 		Sleep(1000);
 		printf("------------------------end\n");
 	}

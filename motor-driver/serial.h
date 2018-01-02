@@ -18,6 +18,7 @@ public:
 public:
 	HANDLE m_hComm;
 	char m_rxdata[50];
+	bool m_ready;
 };
 
 #pragma once

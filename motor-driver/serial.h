@@ -17,7 +17,7 @@ public:
 	unsigned char ReceiveData();
 public:
 	HANDLE m_hComm;
-	char m_rxdata[512];
+	char m_rxdata[50];
 };
 
 #pragma once

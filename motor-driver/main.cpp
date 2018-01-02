@@ -39,7 +39,7 @@ int main(int argc, _TCHAR* argv[])
 		printf("------------------------end\n");
 	}
 	*/
-
+/*
 	while (1) {
 		LeftRightMdMove(serial, 100, direction);
 		//printf("%s, number is: %d \n", serial.m_rxdata, serial.ReceiveData());
@@ -49,6 +49,16 @@ int main(int argc, _TCHAR* argv[])
 		Sleep(1000);
 		printf("------------------------end\n");
 	}
+	*/
+	while (1) {
+		//LeftRightMdMove(serial, 100, 0);
+
+		MotorWriteTest(serial);
+		serial.ReceiveData();
+		Sleep(1000);
+		printf("------------------------end\n");
+	}
+
 
 	return 0;
 }

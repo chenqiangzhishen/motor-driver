@@ -29,21 +29,93 @@ DWORD WINAPI CommProc(LPVOID lpParam) {
 	//清空串口
 	PurgeComm(pSerial->m_hComm, PURGE_RXCLEAR | PURGE_TXCLEAR);
 
-	char buf[512];
+	char buf[1];
+	char handlebuf[30];
+	char *find = NULL;
 	DWORD dwRead;
+	//====will delete following two vars.
+	char str[30];
+	int size = 0;
+	int i = 0;
+	//===
+	DWORD read, written;
+	DCB port;
+	HANDLE keyboard = GetStdHandle(STD_INPUT_HANDLE);
+	HANDLE screen = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	while (pSerial->m_hComm != INVALID_HANDLE_VALUE) {
-		BOOL bReadOK = ReadFile(pSerial->m_hComm, buf, 512, &dwRead, NULL);
+		BOOL bReadOK = ReadFile(pSerial->m_hComm, buf, sizeof buf, &dwRead, NULL);
 		//printf("[in CommProc function]: COM1 buf=%s \n", buf);
+		//if (bReadOK && (dwRead > 0)) {
 		if (bReadOK && (dwRead > 0)) {
-			buf[dwRead] = '\0';
-			strcpy_s(pSerial->m_rxdata, buf);
-		    //printf("[in CommProc function]: COM1 buf=%s \n", buf);
-			printf("[in CommProc function]: COM1 pSerial->m_rxdata=%s \n", pSerial->m_rxdata);
+		//if (dwRead) {
+			//buf[dwRead] = '\0';
+			/*
+			if (strstr(buf, "<event #1>") != NULL) {
+				//strcpy_s(pSerial->m_rxdata, buf);
 
-			//MessageBoxA(NULL, buf, "串口收到数据", MB_OK);
+				printf("<event #1> happend \n");
+
+
+				size = sprintf_s(str, "<send 0x%02x 0x%02x>", 0x80, 0x00);
+				pSerial->SendData(str, size);
+				//TODO: 根据返回的数据信息，分别处理
+			}
+			else
+			*/
+			//	strcpy_s(pSerial->m_rxdata, buf);
+			//WriteFile(screen, buf, dwRead, &written, NULL);
+
+			if (buf[0] == '<') {
+				i = 0;
+				pSerial->m_rxdata[i++] = '<';
+			}
+			else if (buf[0] == '>') {
+				pSerial->m_rxdata[i++] = '>';
+				pSerial->m_rxdata[i] = '\0';
+			}
+			else {
+				pSerial->m_rxdata[i++] = buf[0];
+			}
+			/*
+			if (strstr(pSerial->m_rxdata, "<event #1>") != NULL) {
+				//strcpy_s(pSerial->m_rxdata, buf);
+
+				printf("<event #1> happend \n");
+
+
+				size = sprintf_s(str, "<send 0x%02x 0x%02x>", 0x80, 0x00);
+				pSerial->SendData(str, size);
+				//TODO: 根据返回的数据信息，分别处理
+			}
+			*/
+
+		}
+		/*
+		if (strchr(buf,'<') && strchr(buf,'>')) {
+				strcpy_s(pSerial->m_rxdata, buf);
+		}
+		else if (strchr(buf, '<')) {
+			memset(handlebuf, 0, sizeof handlebuf);
+			strcpy_s(handlebuf, buf);
+		}
+		else if (strchr(buf, '>')) {
+			strcat_s(handlebuf, buf);
+			strcpy_s(pSerial->m_rxdata, handlebuf);
+		}
+		else {
+			strcat_s(handlebuf, buf);
 		}
 
+		if (strstr(handlebuf, "<event #1>") != NULL) {
+			//TODO: 处理各种开关事件
+			//1、清零地址0x00
+			//2、读取各开关的值，查看是哪个开关事件
+			printf("has <enent #1>\n");
+		}
+		printf("handlebuf=%s\n", handlebuf);
+		printf("[in CommProc function]: COM1 pSerial->m_rxdata=%s \n", pSerial->m_rxdata);
+		*/
 	}
 	return 0;
 }
@@ -137,11 +209,11 @@ BOOL CSerial::OpenSerialPort(TCHAR* port, UINT baud_rate, BYTE date_bits, BYTE s
 	//设置串口读写时间
 	COMMTIMEOUTS CommTimeOuts;
 	GetCommTimeouts(m_hComm, &CommTimeOuts);
-	CommTimeOuts.ReadIntervalTimeout = MAXDWORD;
-	CommTimeOuts.ReadTotalTimeoutMultiplier = 0;
-	CommTimeOuts.ReadTotalTimeoutConstant = 0;
-	CommTimeOuts.WriteTotalTimeoutMultiplier = 10;
-	CommTimeOuts.WriteTotalTimeoutConstant = 1000;
+	CommTimeOuts.ReadIntervalTimeout = 1;
+	CommTimeOuts.ReadTotalTimeoutMultiplier = 1;
+	CommTimeOuts.ReadTotalTimeoutConstant = 1;
+	CommTimeOuts.WriteTotalTimeoutMultiplier = 1;
+	CommTimeOuts.WriteTotalTimeoutConstant = 1;
 
 	if (!SetCommTimeouts(m_hComm, &CommTimeOuts)) {
 		MessageBox(NULL, _T("设置串口时间失败"), _T("提示"), MB_OK);
@@ -189,10 +261,15 @@ unsigned char CSerial::ReceiveData() {
 	printf("COM1 serial.m_rxdata=%s \n", m_rxdata);
 	std::size_t found_begin = rxdata.find('<');
 	std::size_t found = rxdata.find_last_of('>');
+	/*
 	if (found_begin != std::string::npos && found != std::string::npos) {
-		ret = (unsigned char)std::stoul(rxdata.substr(found - 4, 4).c_str(), nullptr, 16);
-		printf("COM1 (unsigned char)serial.m_rxdata=%d \n", ret);
-		return ret;
+		if (found - 4 >= 0) {
+			ret = (unsigned char)std::stoul(rxdata.substr(found - 4, 4).c_str(), nullptr, 16);
+			printf("COM1 (unsigned char)serial.m_rxdata=%d \n", ret);
+			return ret;
+		}
 	}
+	*/
+
 	return 0;
 }

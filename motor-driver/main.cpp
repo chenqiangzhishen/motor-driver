@@ -18,7 +18,7 @@ int main(int argc, _TCHAR* argv[])
 	U8  direction = 1;
 
 	printf("initialization------------------------\n");
-	serial.OpenSerialPort(_T("COM3:"), 115200, 8);  //打开串口后，自动接收数据
+	serial.OpenSerialPort(_T("COM1:"), 115200, 8);  //打开串口后，自动接收数据
 	//要进行两次复位，第一次上电初始化马达的全局控制寄存器
 	MotorWrite(serial, 0x00, 0x00);
 	//第二次上电初始化马达的全局控制寄存器
@@ -54,12 +54,13 @@ int main(int argc, _TCHAR* argv[])
 	*/
 	while (1) {
 		printf("------------------------begin\n");
-		LeftRightMdMove(serial, 100, 0);
+		LeftRightMdMove(serial, 100, direction);
+		direction = (direction + 1) % 2;
 
 		//MotorWriteTest(serial);
 		//MotorWrite(serial, 0x00, 0xaa);
 		//MotorRead(serial, 0x00);
-		Sleep(1000);
+		Sleep(500);
 		printf("------------------------end\n");
 	}
 

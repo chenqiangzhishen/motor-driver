@@ -66,8 +66,15 @@ void LeftRightMdMove(CSerial &serial, int num, U8 de)
 
 	if (de>0) de = 1;
 
-	MotorWrite(serial, 0x0c, 0x7f & (num >> 8) | (de << 7));
-	MotorWrite(serial, 0x0d, (U8)num & 0xff);
+	printf("motor number=0x%02x\n", num);
+	U8 high = 0x7f & (num >> 8) | (de << 7);
+	U8 low = (U8)num & 0xff;
+	//MotorWrite(serial, 0x0c, 0x7f & (num >> 8) | (de << 7));
+	//printf("motor number_high=0x%02x\n", high);
+	MotorWrite(serial, 0x0c, high);
+	//printf("motor number_low=0x%02x\n", low);
+	MotorWrite(serial, 0x0d, low);
+	//MotorWrite(serial, 0x0d, (U8)num & 0xff);
 
 	controlReg = MotorRead(serial, 0x00);
 	MotorWrite(serial, 0x00, controlReg | 0x02);

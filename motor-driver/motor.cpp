@@ -13,6 +13,7 @@ void MotorWrite(CSerial &serial, unsigned char address, unsigned char data) {
 
 	size = sprintf_s(str, "<send 0x%02x 0x%02x>", 0x80 | address, data);
 	serial.SendData(str, size);
+	Sleep(100);
 }
 
 void MotorWriteTest(CSerial &serial) {
@@ -22,6 +23,7 @@ void MotorWriteTest(CSerial &serial) {
 
 	size = sprintf_s(str, "<%s>", "version");
 	serial.SendData(str, size);
+	Sleep(100);
 	printf("test version is %s \n", str);
 }
 
@@ -33,7 +35,12 @@ unsigned char MotorRead(CSerial &serial, unsigned char address) {
 
 	size = sprintf_s(str, "<send 0x%02x 0x%02x,0x%02x 0x%02x>", address, 0xff, 0xff, 0xff);
 	serial.SendData(str, size);
-	ret_val = serial.ReceiveData();
+	Sleep(100);
+	if (serial.m_ready) {
+		ret_val = serial.ReceiveData();
+		serial.m_ready = false;
+	}
+	Sleep(100);
 	
 	return ret_val;
 }

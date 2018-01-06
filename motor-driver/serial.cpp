@@ -60,10 +60,12 @@ DWORD WINAPI CommProc(LPVOID lpParam) {
 				strcat_s(handlebuf, buf);
 			}
 
+			/*
 			if (pSerial->m_ready) {
 				pSerial->ReceiveData();
 				pSerial->m_ready = false;
 			}
+			*/
 		}
 	}
 	return 0;
@@ -206,26 +208,29 @@ unsigned char CSerial::ReceiveData() {
 	unsigned char ret;
 	char str[30];
 	int size = 0;
-
 	std::string rxdata = m_rxdata;
 
-	printf("COM1 serial.m_rxdata=%s \n", m_rxdata);
+
 	if (strstr(m_rxdata, "<EXOR RTOS V1.0>") != NULL) {
+	    printf("COM1 serial.m_rxdata=%s \n", m_rxdata);
 		//nothing to do.
 	}
 	else if (strstr(m_rxdata, "<event #1>") != NULL) {
 		//TODO: 处理各种开关事件
 		//1、清零地址0x00
 		//2、读取各开关的值，查看是哪个开关事件
+	    printf("COM1 serial.m_rxdata=%s \n", m_rxdata);
 		size = sprintf_s(str, "<send 0x%02x 0x%02x>", 0x80, 0x00);
 		SendData(str, size);
 	}
-	else {
+	else if (strchr(m_rxdata, ',')) {
+	    //rxdata = m_rxdata;
+	    printf("COM1 serial.m_rxdata=%s \n", m_rxdata);
 		std::size_t found_begin = rxdata.find('<');
-		std::size_t found = rxdata.find_last_of('>');
-		if (found_begin != std::string::npos && found != std::string::npos) {
-			if (found - 4 >= 0) {
-				ret = (unsigned char)std::stoul(rxdata.substr(found - 4, 4).c_str(), nullptr, 16);
+		std::size_t found_end = rxdata.find_last_of('>');
+		if (found_begin != std::string::npos && found_end != std::string::npos) {
+			if (found_end - 4 >= 0) {
+				ret = (unsigned char)std::stoul(rxdata.substr(found_end - 4, 4).c_str(), nullptr, 16);
 				printf("COM1 (unsigned char)serial.m_rxdata=%d \n", ret);
 				return ret;
 			}

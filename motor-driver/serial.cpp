@@ -1,15 +1,12 @@
 #include "StdAfx.h"
-#include "serial.h"
 #include <process.h>
-
-#define _CRT_SECURE_NO_WARNINGS
+#include "serial.h"
 
 typedef unsigned(__stdcall *PTHREEA_START) (void *);
 
 CSerial::CSerial(void)
 {
 	m_hComm = INVALID_HANDLE_VALUE;
-	memset(m_rxdata, 0, sizeof m_rxdata);
 }
 
 CSerial::~CSerial(void)
@@ -24,7 +21,6 @@ CSerial::~CSerial(void)
 * 描述 ： 收到数据后，简单的显示出来
 ********************************************************************************************/
 DWORD WINAPI CommProc(LPVOID lpParam) {
-
 	CSerial* pSerial = (CSerial*)lpParam;
 
 	//清空串口
@@ -70,26 +66,6 @@ DWORD WINAPI CommProc(LPVOID lpParam) {
 	}
 	return 0;
 }
-/*
-DWORD WINAPI CommProc(LPVOID lpParam) {
-
-CSerial* pSerial = (CSerial*)lpParam;
-
-//清空串口
-PurgeComm(pSerial->m_hComm, PURGE_RXCLEAR | PURGE_TXCLEAR);
-
-char buf[512];
-DWORD dwRead;
-while (pSerial->m_hComm != INVALID_HANDLE_VALUE) {
-BOOL bReadOK  = ReadFile(pSerial->m_hComm, buf, 512, &dwRead, NULL);
-if (bReadOK  && (dwRead > 0)) {
-buf[dwRead] = '\0';
-MessageBoxA(NULL, buf, "串口收到数据", MB_OK);
-}
-}
-return 0;
-}
-*/
 
 /*******************************************************************************************
 * 功能     :   打开串口
@@ -147,7 +123,7 @@ BOOL CSerial::OpenSerialPort(TCHAR* port, UINT baud_rate, BYTE date_bits, BYTE s
 	dcb.fRtsControl = RTS_CONTROL_ENABLE;
 	dcb.fAbortOnError = FALSE; //串口发送错误，并不终止串口读写
 
-							   //设置串口参数
+	//设置串口参数
 	if (!SetCommState(m_hComm, &dcb)) {
 		MessageBox(NULL, _T("设置串口参数失败"), _T("提示"), MB_OK);
 		return FALSE;
@@ -203,29 +179,25 @@ BOOL CSerial::SendData(char* data, int len) {
 }
 // 接收数据
 unsigned char CSerial::ReceiveData() {
-
 	int rx_value = 0;
 	unsigned char ret;
 	char str[30];
 	int size = 0;
-	std::string rxdata = m_rxdata;
 
 
+	printf("COM1 serial.m_rxdata=%s \n", m_rxdata);
 	if (strstr(m_rxdata, "<EXOR RTOS V1.0>") != NULL) {
-	    printf("COM1 serial.m_rxdata=%s \n", m_rxdata);
 		//nothing to do.
 	}
 	else if (strstr(m_rxdata, "<event #1>") != NULL) {
 		//TODO: 处理各种开关事件
 		//1、清零地址0x00
 		//2、读取各开关的值，查看是哪个开关事件
-	    printf("COM1 serial.m_rxdata=%s \n", m_rxdata);
 		size = sprintf_s(str, "<send 0x%02x 0x%02x>", 0x80, 0x00);
 		SendData(str, size);
 	}
 	else if (strchr(m_rxdata, ',')) {
-	    //rxdata = m_rxdata;
-	    printf("COM1 serial.m_rxdata=%s \n", m_rxdata);
+		std::string rxdata = m_rxdata;
 		std::size_t found_begin = rxdata.find('<');
 		std::size_t found_end = rxdata.find_last_of('>');
 		if (found_begin != std::string::npos && found_end != std::string::npos) {
@@ -235,7 +207,7 @@ unsigned char CSerial::ReceiveData() {
 				return ret;
 			}
 		}
-    }
+	}
 
 	return 0;
 }

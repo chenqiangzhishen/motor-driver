@@ -1,13 +1,12 @@
 #pragma once
+
 #include <windows.h>
-#include <iostream>
 #include "stdafx.h"
 #include "tchar.h"
 #include "motor.h"
 #include "Serial.h"
 
 void MotorWrite(CSerial &serial, unsigned char address, unsigned char data) {
-
 	char str[30];
 	int size = 0;
 
@@ -17,7 +16,6 @@ void MotorWrite(CSerial &serial, unsigned char address, unsigned char data) {
 }
 
 void MotorWriteTest(CSerial &serial) {
-
 	char str[30];
 	int size = 0;
 
@@ -28,7 +26,6 @@ void MotorWriteTest(CSerial &serial) {
 }
 
 unsigned char MotorRead(CSerial &serial, unsigned char address) {
-
 	char str[30];
 	int size = 0;
 	unsigned char ret_val = 0;

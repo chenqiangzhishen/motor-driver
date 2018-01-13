@@ -33,10 +33,8 @@ unsigned char MotorRead(CSerial &serial, unsigned char address) {
 	size = sprintf_s(str, "<send 0x%02x 0x%02x,0x%02x 0x%02x>", address, 0xff, 0xff, 0xff);
 	serial.SendData(str, size);
 	Sleep(100);
-	if (serial.m_ready) {
-		ret_val = serial.ReceiveData();
-		serial.m_ready = false;
-	}
+	ret_val = serial.ReceiveData();
+	serial.m_ready = false;
 	Sleep(100);
 	
 	return ret_val;

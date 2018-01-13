@@ -48,6 +48,14 @@ void LeftRightMdStop(CSerial &serial)
 	MotorWrite(serial, 0x00, controlReg&~0x02);
 }
 
+void FrontBackMdStop(CSerial &serial)
+{
+	unsigned char controlReg = 0;
+
+	controlReg = MotorRead(serial, 0x00);
+	MotorWrite(serial, 0x00, controlReg&~0x04);
+}
+
 //U8 MdMoveFlag = 1;
 // 控制步进马达转动
 // 参数num：转动步数
@@ -73,4 +81,31 @@ void LeftRightMdMove(CSerial &serial, int num, U8 de)
 
 	controlReg = MotorRead(serial, 0x00);
 	MotorWrite(serial, 0x00, controlReg | 0x02);
+}
+
+//U8 MdMoveFlag = 1;
+// 控制步进马达转动
+// 参数num：转动步数
+// 参数de：转动方向(0,正转 1,倒转)
+void FrontBackMdMove(CSerial &serial, int num, U8 de)
+{
+	unsigned char controlReg = 0;
+	//修改电机步数时应先关闭使能再修改步数及方向
+	//目前发现大于一个字节，需要先停止，否则会出错。
+	FrontBackMdStop(serial);
+
+	if (de>0) de = 1;
+
+	printf("motor number=0x%02x\n", num);
+	U8 high = 0x7f & (num >> 8) | (de << 7);
+	U8 low = (U8)num & 0xff;
+	//MotorWrite(serial, 0x0c, 0x7f & (num >> 8) | (de << 7));
+	//printf("motor number_high=0x%02x\n", high);
+	MotorWrite(serial, 0x0e, high);
+	//printf("motor number_low=0x%02x\n", low);
+	MotorWrite(serial, 0x0f, low);
+	//MotorWrite(serial, 0x0d, (U8)num & 0xff);
+
+	controlReg = MotorRead(serial, 0x00);
+	MotorWrite(serial, 0x00, controlReg | 0x04);
 }

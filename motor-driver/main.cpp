@@ -25,8 +25,8 @@ int main(int argc, _TCHAR* argv[])
 
 	//LightPathMdStop();      //马达先停
 	LeftRightMdStop(serial);      //马达先停
+	FrontBackMdStop(serial);
 	printf("initialization finished------------------------\n");
-	//FrontBackMdStop();
 	//UpDownMdStop();
 
 	while (1) {
@@ -41,9 +41,18 @@ int main(int argc, _TCHAR* argv[])
 
 		// test 3. motor run left & right
 		LeftRightMdMove(serial, 100, direction);
+		Sleep(100);
+		FrontBackMdMove(serial, 500, direction);
 		direction = (direction + 1) % 2;
 
 		Sleep(500);
+		if (serial.m_lightpath_swith) {
+			MotorWrite(serial, 0x00, 0x00);
+			serial.m_lightpath_swith = false;
+		    Sleep(1000);
+		}
+		LeftRightMdStop(serial);      //马达先停
+		FrontBackMdStop(serial);
 
 		printf("------------------------end\n");
 	}

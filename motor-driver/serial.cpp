@@ -7,6 +7,7 @@ typedef unsigned(__stdcall *PTHREEA_START) (void *);
 CSerial::CSerial(void)
 {
 	m_hComm = INVALID_HANDLE_VALUE;
+	m_lightpath_swith = false;
 }
 
 CSerial::~CSerial(void)
@@ -193,8 +194,10 @@ unsigned char CSerial::ReceiveData() {
 		//TODO: 处理各种开关事件
 		//1、清零地址0x00
 		//2、读取各开关的值，查看是哪个开关事件
-		size = sprintf_s(str, "<send 0x%02x 0x%02x>", 0x80, 0x00);
-		SendData(str, size);
+
+		m_lightpath_swith = true;
+		//size = sprintf_s(str, "<send 0x%02x 0x%02x>", 0x80, 0x00);
+		//SendData(str, size);
 	}
 	else if (strchr(m_rxdata, ',')) {
 		std::string rxdata = m_rxdata;

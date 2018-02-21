@@ -6,49 +6,51 @@
 #include "motor.h"
 #include "Serial.h"
 
-void MotorWrite(CSerial &serial, unsigned char address, unsigned char data) {
-	char str[30];
+void MotorWrite(CSerialPort *serial, unsigned char address, unsigned char data) {
+	char str[100];
 	int size = 0;
 
 	size = sprintf_s(str, "<send 0x%02x 0x%02x>", 0x80 | address, data);
-	serial.SendData(str, size);
-	Sleep(100);
+	serial->WriteToPort(str);
+	//NOTE: no less than 0.2ms, or motor will be abnormal when running
+	Sleep(200);
 }
 
-void MotorWriteTest(CSerial &serial) {
+void MotorWriteTest(CSerialPort *serial) {
 	char str[30];
 	int size = 0;
 
 	size = sprintf_s(str, "<%s>", "version");
-	serial.SendData(str, size);
-	Sleep(100);
-	printf("test version is %s \n", str);
+	serial->WriteToPort(str);
+	Sleep(200);
+	printf("test command is %s \n", str);
 }
 
-unsigned char MotorRead(CSerial &serial, unsigned char address) {
+unsigned char MotorRead(CSerialPort *serial, unsigned char address) {
 	char str[30];
 	int size = 0;
 	unsigned char ret_val = 0;
 
 	size = sprintf_s(str, "<send 0x%02x 0x%02x,0x%02x 0x%02x>", address, 0xff, 0xff, 0xff);
-	serial.SendData(str, size);
+	serial->WriteToPort(str);
 	Sleep(100);
-	ret_val = serial.ReceiveData();
-	serial.m_ready = false;
+	ret_val = serial->ReceiveData();
+	printf("MotoRead() : ret_val=%d\n", ret_val);
+	//serial.m_ready = false;
 	Sleep(100);
-	
+
 	return ret_val;
 }
 
-void LeftRightMdStop(CSerial &serial)
+void LeftRightMdStop(CSerialPort *serial)
 {
 	unsigned char controlReg = 0;
 
-	controlReg = MotorRead(serial, 0x00);
+	//controlReg = MotorRead(serial, 0x00);
 	MotorWrite(serial, 0x00, controlReg&~0x02);
 }
 
-void FrontBackMdStop(CSerial &serial)
+void FrontBackMdStop(CSerialPort *serial)
 {
 	unsigned char controlReg = 0;
 
@@ -60,7 +62,7 @@ void FrontBackMdStop(CSerial &serial)
 // 控制步进马达转动
 // 参数num：转动步数
 // 参数de：转动方向(0,正转 1,倒转)
-void LeftRightMdMove(CSerial &serial, int num, U8 de)
+void LeftRightMdMove(CSerialPort *serial, int num, U8 de)
 {
 	unsigned char controlReg = 0;
 	//修改电机步数时应先关闭使能再修改步数及方向
@@ -79,7 +81,7 @@ void LeftRightMdMove(CSerial &serial, int num, U8 de)
 	MotorWrite(serial, 0x0d, low);
 	//MotorWrite(serial, 0x0d, (U8)num & 0xff);
 
-	controlReg = MotorRead(serial, 0x00);
+	//controlReg = MotorRead(serial, 0x00);
 	MotorWrite(serial, 0x00, controlReg | 0x02);
 }
 
@@ -87,7 +89,7 @@ void LeftRightMdMove(CSerial &serial, int num, U8 de)
 // 控制步进马达转动
 // 参数num：转动步数
 // 参数de：转动方向(0,正转 1,倒转)
-void FrontBackMdMove(CSerial &serial, int num, U8 de)
+void FrontBackMdMove(CSerialPort *serial, int num, U8 de)
 {
 	unsigned char controlReg = 0;
 	//修改电机步数时应先关闭使能再修改步数及方向
@@ -106,6 +108,6 @@ void FrontBackMdMove(CSerial &serial, int num, U8 de)
 	MotorWrite(serial, 0x0f, low);
 	//MotorWrite(serial, 0x0d, (U8)num & 0xff);
 
-	controlReg = MotorRead(serial, 0x00);
+	//controlReg = MotorRead(serial, 0x00);
 	MotorWrite(serial, 0x00, controlReg | 0x04);
 }

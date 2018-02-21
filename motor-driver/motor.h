@@ -4,11 +4,11 @@
 
 #define U8 unsigned char
 
-void MotorWrite(CSerial &serial, unsigned char address, unsigned char data);
-void MotorWriteTest(CSerial &serial);
+void MotorWrite(CSerialPort *serial, unsigned char address, unsigned char data);
+void MotorWriteTest(CSerialPort *serial);
 
-unsigned char MotorRead(CSerial &serial, unsigned char address);
-void LeftRightMdStop(CSerial &serial);
-void LeftRightMdMove(CSerial &serial, int num, U8 de);
-void FrontBackMdStop(CSerial &serial);
-void FrontBackMdMove(CSerial &serial, int num, U8 de);
+unsigned char MotorRead(CSerialPort *serial, unsigned char address);
+void LeftRightMdStop(CSerialPort *serial);
+void LeftRightMdMove(CSerialPort *serial, int num, U8 de);
+void FrontBackMdStop(CSerialPort *serial);
+void FrontBackMdMove(CSerialPort *serial, int num, U8 de);

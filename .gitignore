@@ -3,3 +3,5 @@ motor-driver.vcxproj
 motor-driver.vcxproj.filters
 Debug
 Release
+motor-driver/tags
+tags

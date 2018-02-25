@@ -4,6 +4,7 @@
 #include "serial.h"
 #include "motor.h"
 #include "tchar.h"
+#include "Printer.h"
 using namespace std;
 
 DWORD WINAPI CommLRThread(LPVOID lpParam) {
@@ -59,6 +60,8 @@ int main(int argc, _TCHAR* argv[])
 	int delay_time = 5000;
 	U8  direction = 1;
 
+	//printer test
+	PrintTest();
 	printf("initialization------------------------\n");
 	//serial.OpenSerialPort(_T("COM1:"), 115200, 8);  //打开串口后，自动接收数据
 	serial->InitPort();

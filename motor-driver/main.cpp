@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "motor.h"
 #include "Printer.h"
+#include "video.h"
 #include <process.h>
 #include <stdlib.h>      
 #include <time.h>  
@@ -112,7 +113,12 @@ int main(int argc, _TCHAR* argv[])
 	U8  direction = 1;
 
 	//printer test
-	PrintTest();
+	//PrintTest();
+
+	//DisplayVideo();
+	OpenCamera();
+
+	while (1);
 
 	CnComm *serial = new CnComm();
 
@@ -128,7 +134,7 @@ int main(int argc, _TCHAR* argv[])
 	printf("initialization finished------------------------\n");
 
 
-	HANDLE m_hThreadMotorParallelMove = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommMotorParallelMoveThread, (LPVOID)serial, 0, NULL);
+	//HANDLE m_hThreadMotorParallelMove = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommMotorParallelMoveThread, (LPVOID)serial, 0, NULL);
 	//HANDLE m_hThreadLR = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommLRThread, (LPVOID)serial, 0, NULL);
 	//HANDLE m_hThreadFB = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommFBThread, (LPVOID)serial, 0, NULL);
 	//HANDLE m_hThreadTest1 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)MotorReadWriteTestThread1, (LPVOID)serial, 0, NULL);

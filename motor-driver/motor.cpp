@@ -8,7 +8,7 @@ void MotorWrite(CnComm *serial, unsigned char address, unsigned char data) {
 	int size = 0;
 
 	size = sprintf_s(str, "<send 0x%02x 0x%02x>", 0x80 | address, data);
-	printf("send to motor=%s \n", str);
+	//printf("send to motor=%s \n", str);
 	serial->Write(str);
 	//NOTE: no less than 0.2ms, or motor will be abnormal when running
 	//0.2ms should send 34 byte
@@ -82,7 +82,7 @@ unsigned char MotorRead(CnComm *serial, unsigned char address) {
 	size = sprintf_s(str, "<send 0x%02x 0x%02x,0x%02x 0x%02x>", address, 0xff, 0xff, 0xff);
 	serial->Write(str);
 	Sleep(100);
-	//ret_val = serial->Read();
+	ret_val = serial->Read(str, sizeof str);
 	printf("MotoRead() : ret_val=%d\n", ret_val);
 	//serial.m_ready = false;
 	Sleep(100);
@@ -95,7 +95,7 @@ void MotorParallelStop(CnComm *serial)
 	unsigned char controlReg = 0;
 
 	//controlReg = MotorRead(serial, 0x00);
-	MotorWrite(serial, 0x00, controlReg&~0x0e);
+	MotorWrite(serial, 0x00, 0x00);
 }
 
 void LeftRightMdStop(CnComm *serial)

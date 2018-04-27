@@ -6,8 +6,8 @@
 #include "Printer.h"
 #include "video.h"
 #include <process.h>
-#include <stdlib.h>      
-#include <time.h>  
+#include <stdlib.h>
+#include <time.h>
 #include <thread>
 #include <iostream>
 #include <assert.h>
@@ -69,6 +69,13 @@ DWORD WINAPI CommMotorParallelMoveThread(LPVOID lpParam) {
 	}
 	printf("-----------parallel mode-------------end\n");
 	return 0;
+}
+
+DWORD WINAPI CameraThread(LPVOID lpParam) {
+	// test 3. motor run in parallel mode
+	printf("-----------camera mode-------------begin\n");
+	OpenCamera();
+	printf("-----------camera mode-------------end\n");
 }
 
 DWORD WINAPI CheckSwitchSign(LPVOID lpParam) {
@@ -152,6 +159,7 @@ int main(int argc, _TCHAR* argv[])
 	FrontBackMdStop(serial);
 	printf("initialization finished------------------------\n");
 
+	HANDLE m_hCamera = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CameraThread, NULL, 0, NULL);
 	HANDLE m_hCheckSwitchSign = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CheckSwitchSign, (LPVOID)serial, 0, NULL);
 	HANDLE m_hThreadMotorParallelMove = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommMotorParallelMoveThread, (LPVOID)serial, 0, NULL);
 	//HANDLE m_hThreadLR = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommLRThread, (LPVOID)serial, 0, NULL);

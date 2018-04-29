@@ -57,13 +57,13 @@ void MotorReadWriteTest(CnComm *serial, int number) {
 	char str[30];
 	char read_buf[50];
 	int size = 0;
-	
+
 	// initialize critical section
 	InitializeCriticalSection(&m_csCommunicationSyncTest);
 	// now it critical!
 	EnterCriticalSection(&m_csCommunicationSyncTest);
 	printf("--------[%d]begin------------- \n", number);
-	
+
 	size = sprintf_s(str, "<%s>", "version");
 	printf("[%d]test command is %s \n", number, str);
 	serial->Write(str, size);

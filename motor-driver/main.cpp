@@ -71,11 +71,24 @@ DWORD WINAPI CommMotorParallelMoveThread(LPVOID lpParam) {
 	return 0;
 }
 
-DWORD WINAPI CameraThread(LPVOID lpParam) {
+DWORD WINAPI Camera0Thread(LPVOID lpParam) {
 	// test 3. motor run in parallel mode
-	printf("-----------camera mode-------------begin\n");
-	OpenCamera();
-	printf("-----------camera mode-------------end\n");
+	printf("-----------camera 0 mode-------------begin\n");
+	if (OpenCamera0())
+		return -1;
+	else
+		return 0;
+	printf("-----------camera 0 mode-------------end\n");
+}
+
+DWORD WINAPI Camera1Thread(LPVOID lpParam) {
+	// test 3. motor run in parallel mode
+	printf("-----------camera 1 mode-------------begin\n");
+	if (OpenCamera1())
+		return -1;
+	else
+		return 0;
+	printf("-----------camera 1 mode-------------end\n");
 }
 
 DWORD WINAPI CheckSwitchSign(LPVOID lpParam) {
@@ -159,7 +172,8 @@ int main(int argc, _TCHAR* argv[])
 	FrontBackMdStop(serial);
 	printf("initialization finished------------------------\n");
 
-	HANDLE m_hCamera = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CameraThread, NULL, 0, NULL);
+	HANDLE m_hCamera0 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)Camera0Thread, NULL, 0, NULL);
+	HANDLE m_hCamera1 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)Camera1Thread, NULL, 0, NULL);
 	HANDLE m_hCheckSwitchSign = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CheckSwitchSign, (LPVOID)serial, 0, NULL);
 	HANDLE m_hThreadMotorParallelMove = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommMotorParallelMoveThread, (LPVOID)serial, 0, NULL);
 	//HANDLE m_hThreadLR = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommLRThread, (LPVOID)serial, 0, NULL);

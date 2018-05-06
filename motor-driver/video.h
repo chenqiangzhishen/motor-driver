@@ -1,4 +1,5 @@
 #pragma once
-int DisplayVideo();
+int DisplayImage();
+int WriteVideo();
 int OpenCamera0();
 int OpenCamera1();

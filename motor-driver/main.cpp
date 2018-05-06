@@ -154,10 +154,11 @@ int main(int argc, _TCHAR* argv[])
 	//printer test
 	//PrintTest();
 
-	//DisplayVideo();
+	//DisplayImage();
 	//OpenCamera();
+	WriteVideo();
 
-	//while (1);
+	while (1);
 
 	CnComm *serial = new CnComm();
 

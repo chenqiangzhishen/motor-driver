@@ -19,30 +19,12 @@ using namespace std;
 //光电开关开启表示没有挡住，关闭说明被挡住了
 U8 g_light_path_sign_on = 1;
 
-DWORD WINAPI CommLRThread(LPVOID lpParam) {
-	// test 3. motor run left & right
-	printf("-----------LR-------------begin\n");
-	U8  direction = 1;
-	CnComm *serial = (CnComm *)lpParam;
-	while (1) {
-		LeftRightMdMove(serial, 100, direction);
-		//Sleep(100);
-		direction = (direction + 1) % 2;
-
-		Sleep(250);
-
-		LeftRightMdStop(serial);      //马达先停
-	}
-
-	printf("-----------LR-------------end\n");
-
-}
 DWORD WINAPI CommFBThread(LPVOID lpParam) {
 	// test 3. motor run left & right
 	printf("-----------FB-------------begin\n");
 	U8  direction = 1;
 	CnComm *serial = (CnComm *)lpParam;
-	while (1) {
+	while (g_light_path_sign_on) {
 		FrontBackMdMove(serial, 100, direction);
 		direction = (direction + 1) % 2;
 
@@ -51,18 +33,47 @@ DWORD WINAPI CommFBThread(LPVOID lpParam) {
 		FrontBackMdStop(serial);
 	}
 	printf("-----------FB-------------end\n");
+	return 0;
+}
+
+DWORD WINAPI CommLRThread(LPVOID lpParam) {
+	// test 3. motor run left & right
+	printf("-----------LR-------------begin\n");
+	U8  direction = 1;
+	CnComm *serial = (CnComm *)lpParam;
+	while (g_light_path_sign_on) {
+		LeftRightMdMove(serial, 100, direction);
+		direction = (direction + 1) % 2;
+		Sleep(250);
+		LeftRightMdStop(serial);      //马达先停
+	}
+
+	printf("-----------LR-------------end\n");
+	return 0;
+}
+
+DWORD WINAPI CommUDThread(LPVOID lpParam) {
+	// test 3. motor run left & right
+	printf("-----------UD-------------begin\n");
+	U8  direction = 1;
+	CnComm *serial = (CnComm *)lpParam;
+	while (g_light_path_sign_on) {
+		UpDownMdMove(serial, 100, direction);
+		direction = (direction + 1) % 2;
+		Sleep(350);
+		UpDownMdStop(serial);
+	}
+	printf("-----------UD-------------end\n");
+	return 0;
 }
 
 DWORD WINAPI CommMotorParallelMoveThread(LPVOID lpParam) {
 	// test 3. motor run in parallel mode
 	printf("-----------parallel mode-------------begin\n");
 	U8  direction = 1;
-	char read_buf[30];
 	CnComm *serial = (CnComm *)lpParam;
 	while (g_light_path_sign_on) {
-		srand(time(NULL));
-		//MotorParallelMove(serial, rand() % 200, rand() % 2, rand() % 50, rand() % 2, rand() % 100, rand() % 2);
-		MotorParallelMove(serial, 200, direction, 50, direction, 100, direction);
+		MotorParallelMove(serial, 100, direction, 100, direction, 100, direction);
 		direction = (direction + 1) % 2;
 		Sleep(150);
 		MotorParallelStop(serial);
@@ -156,9 +167,9 @@ int main(int argc, _TCHAR* argv[])
 
 	//DisplayImage();
 	//OpenCamera();
-	WriteVideo();
+	//WriteVideo();
 
-	while (1);
+	//while (1);
 
 	CnComm *serial = new CnComm();
 
@@ -169,16 +180,28 @@ int main(int argc, _TCHAR* argv[])
 	MotorWrite(serial, 0x00, 0x00);
 
 	//LightPathMdStop();      //马达先停
-	LeftRightMdStop(serial);      //马达先停
 	FrontBackMdStop(serial);
+	LeftRightMdStop(serial);      //马达先停
+	UpDownMdStop(serial);      //马达先停
+
 	printf("initialization finished------------------------\n");
 
 	HANDLE m_hCamera0 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)Camera0Thread, NULL, 0, NULL);
 	HANDLE m_hCamera1 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)Camera1Thread, NULL, 0, NULL);
 	HANDLE m_hCheckSwitchSign = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CheckSwitchSign, (LPVOID)serial, 0, NULL);
+
+	// if want run motor in parallel, enable this thread.
 	HANDLE m_hThreadMotorParallelMove = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommMotorParallelMoveThread, (LPVOID)serial, 0, NULL);
-	//HANDLE m_hThreadLR = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommLRThread, (LPVOID)serial, 0, NULL);
+
+	//FRONT&BACK
 	//HANDLE m_hThreadFB = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommFBThread, (LPVOID)serial, 0, NULL);
+
+	//LEFT&RIGHT
+	//HANDLE m_hThreadLR = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommLRThread, (LPVOID)serial, 0, NULL);
+
+	//UP&DOWN
+	//HANDLE m_hThreadUD = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommUDThread, (LPVOID)serial, 0, NULL);
+	
 	//HANDLE m_hThreadTest1 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)MotorReadWriteTestThread1, (LPVOID)serial, 0, NULL);
 	//HANDLE m_hThreadTest2 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)MotorReadWriteTestThread2, (LPVOID)serial, 0, NULL);
 

@@ -5,6 +5,7 @@
 #include "motor.h"
 #include "Printer.h"
 #include "video.h"
+#include "control.h"
 #include <process.h>
 #include <stdlib.h>
 #include <time.h>
@@ -73,6 +74,7 @@ DWORD WINAPI CommMotorParallelMoveThread(LPVOID lpParam) {
 	U8  direction = 1;
 	CnComm *serial = (CnComm *)lpParam;
 	while (g_light_path_sign_on) {
+		//MotorParallelMove(serial, 20, 1, 0, 0, 0, 1);
 		MotorParallelMove(serial, 100, direction, 100, direction, 100, direction);
 		direction = (direction + 1) % 2;
 		Sleep(150);
@@ -183,6 +185,17 @@ int main(int argc, _TCHAR* argv[])
 	FrontBackMdStop(serial);
 	LeftRightMdStop(serial);      //马达先停
 	UpDownMdStop(serial);      //马达先停
+
+	//set motor power on
+	MotorPowerOn(serial, 6);
+
+	//
+
+	//set power 12v & 5v on
+	//Power12V(serial, 4);
+
+	//set power 5v on
+	//Power5V(serial, 2);
 
 	printf("initialization finished------------------------\n");
 

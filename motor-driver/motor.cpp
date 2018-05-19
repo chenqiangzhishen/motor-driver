@@ -31,7 +31,7 @@ void MotorParallelMove(CnComm *serial, int fbNum, U8 fbD, int lrNum, U8 lrD, int
 	//目前发现大于一个字节，需要先停止，否则会出错。
 
 	MotorParallelStop(serial);
-	// Direction: 1
+	// Direction: 1 -> front, 0 -> back
 	if (fbD>0) fbD = 1;
 	// Direction: 1 -> left, 0 -> right
 	if (lrD>0) lrD = 1;

@@ -75,9 +75,9 @@ DWORD WINAPI CommMotorParallelMoveThread(LPVOID lpParam) {
 	CnComm *serial = (CnComm *)lpParam;
 	while (g_light_path_sign_on) {
 		//MotorParallelMove(serial, 20, 1, 0, 0, 0, 1);
-		MotorParallelMove(serial, 100, direction, 100, direction, 100, direction);
-		direction = (direction + 1) % 2;
-		Sleep(150);
+		//MotorParallelMove(serial, 100, direction, 100, direction, 100, direction);
+		//direction = (direction + 1) % 2;
+		//Sleep(150);
 		MotorParallelStop(serial);
 	}
 	printf("-----------parallel mode-------------end\n");
@@ -188,7 +188,7 @@ int main(int argc, _TCHAR* argv[])
 
 	//set motor power on
 	MotorPowerOn(serial, 6);
-
+	LightPathMdInitPos(serial);
 	//
 
 	//set power 12v & 5v on

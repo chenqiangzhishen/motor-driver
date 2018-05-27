@@ -11,9 +11,9 @@ void MotorPowerOn(CnComm *serial, unsigned char data) {
 
 	size = sprintf_s(str, "<set power=0x%02x>", data);
 	serial->Write(str);
-	//NOTE: no less than 0.2ms, or motor will be abnormal when running
-	//0.2ms should send 34 byte
-	Sleep(150);
+	//NOTE: no less than 0.2s, or motor will be abnormal when running
+	//0.2s should send 34 byte
+	Sleep(200);
 }
 
 /*

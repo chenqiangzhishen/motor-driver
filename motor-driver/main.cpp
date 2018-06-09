@@ -45,7 +45,7 @@ DWORD WINAPI CommLRThread(LPVOID lpParam) {
 	while (g_light_path_sign_on) {
 		LeftRightMdMove(serial, 100, direction);
 		direction = (direction + 1) % 2;
-		Sleep(250);
+		//Sleep(250);
 		LeftRightMdStop(serial);      //马达先停
 	}
 
@@ -193,7 +193,7 @@ int main(int argc, _TCHAR* argv[])
 	//第二次上电初始化马达的全局控制寄存器
 	MotorWrite(serial, 0x00, 0x00);
 
-	//LightPathMdStop();      //马达先停
+	LightPathMdStop(serial);      //马达先停
 	FrontBackMdStop(serial);
 	LeftRightMdStop(serial);      //马达先停
 	UpDownMdStop(serial);      //马达先停
@@ -211,12 +211,12 @@ int main(int argc, _TCHAR* argv[])
 	//set power 5v on
 	//Power5V(serial, 2);
 
-	//HANDLE m_hCamera0 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)Camera0Thread, NULL, 0, NULL);
-	//HANDLE m_hCamera1 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)Camera1Thread, NULL, 0, NULL);
-	//HANDLE m_hCheckSwitchSign = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CheckSwitchSign, (LPVOID)serial, 0, NULL);
+	HANDLE m_hCamera0 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)Camera0Thread, NULL, 0, NULL);
+	HANDLE m_hCamera1 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)Camera1Thread, NULL, 0, NULL);
+	HANDLE m_hCheckSwitchSign = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CheckSwitchSign, (LPVOID)serial, 0, NULL);
 
 	// if want run motor in parallel, enable this thread.
-	//HANDLE m_hThreadMotorParallelMove = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommMotorParallelMoveThread, (LPVOID)serial, 0, NULL);
+	HANDLE m_hThreadMotorParallelMove = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommMotorParallelMoveThread, (LPVOID)serial, 0, NULL);
 
 	//LEFT&RIGHT
 	//HANDLE m_hThreadLR = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommLRThread, (LPVOID)serial, 0, NULL);
@@ -228,11 +228,11 @@ int main(int argc, _TCHAR* argv[])
 	//HANDLE m_hThreadUD = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommUDThread, (LPVOID)serial, 0, NULL);
 
 	//lightpath
-	HANDLE m_hThreadLightPath = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)LightPathMdThread, (LPVOID)serial, 0, NULL);
+	//HANDLE m_hThreadLightPath = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)LightPathMdThread, (LPVOID)serial, 0, NULL);
 
 	//HANDLE m_hThreadTest1 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)MotorReadWriteTestThread1, (LPVOID)serial, 0, NULL);
 	//HANDLE m_hThreadTest2 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)MotorReadWriteTestThread2, (LPVOID)serial, 0, NULL);
-
+	//LightPathMdInitPos(serial);
 	while (1);
 	return 0;
 }

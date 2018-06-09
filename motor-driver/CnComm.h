@@ -104,8 +104,8 @@ public:
 	CnComm(DWORD dwOption = EN_THREAD )
 #else
 	//! WIN32:默认打开串口时启动监视线程 异步重叠方式 EN_OVERLAPPED
-	//CnComm(DWORD dwOption = EN_THREAD | EN_OVERLAPPED | EN_TX_THREAD | EN_RX_THREAD)
-	CnComm(DWORD dwOption = EN_THREAD | EN_TX_THREAD | EN_RX_THREAD | EN_OVERLAPPED | EN_TX_BUFFER | EN_RX_BUFFER)
+	CnComm(DWORD dwOption = EN_THREAD | EN_TX_THREAD | EN_RX_THREAD)
+	//CnComm(DWORD dwOption = EN_THREAD | EN_TX_THREAD | EN_RX_THREAD | EN_OVERLAPPED | EN_TX_BUFFER | EN_RX_BUFFER)
 #endif
 	{
 		Init();
@@ -1677,12 +1677,20 @@ protected:
 
 		if(!CN_ASSERT(::GetCommTimeouts(hComm_, &CO_)))
 			return false;
-	
+	/*
 		CO_.ReadIntervalTimeout = 100;//! 配置超时结构 字符最小间隔100ms
 		CO_.ReadTotalTimeoutMultiplier = 0;
 		CO_.ReadTotalTimeoutConstant = IsOverlappedMode() ? 500 : 250;//! 读超时 重叠I/O模式下500毫秒 阻塞I/O模式下250毫秒
 		CO_.WriteTotalTimeoutMultiplier = IsOverlappedMode() ? 1 : 0;
 		CO_.WriteTotalTimeoutConstant = IsOverlappedMode() ? 10000 : 250;//! 写超时 重叠I/O模式下(10000+1×字节数)毫秒 阻塞I/O模式下250毫秒
+*/
+
+		CO_.ReadIntervalTimeout = 1;//! 配置超时结构 字符最小间隔100ms
+		CO_.ReadTotalTimeoutMultiplier = 1;
+		CO_.ReadTotalTimeoutConstant = 1;//! 读超时 重叠I/O模式下500毫秒 阻塞I/O模式下250毫秒
+		CO_.WriteTotalTimeoutMultiplier = 1;
+		CO_.WriteTotalTimeoutConstant = 1;//! 写超时 重叠I/O模式下(10000+1×字节数)毫秒 阻塞I/O模式下250毫秒
+
 
 		if(!CN_ASSERT(::SetCommTimeouts(hComm_, &CO_)))
 			return false;

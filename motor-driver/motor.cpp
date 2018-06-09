@@ -12,7 +12,8 @@ void MotorWrite(CnComm *serial, unsigned char address, unsigned char data) {
 	serial->Write(str);
 	//NOTE: no less than 2ms, or motor will be abnormal when running
 	//2ms should send 23 byte
-	Sleep(200);
+	//Sleep(200);
+	Sleep(30);
 }
 
 void MotorWriteTest(CnComm *serial) {
@@ -96,7 +97,8 @@ unsigned char MotorRead(CnComm *serial, unsigned char address) {
 	sprintf_s(str, "<send 0x%02x 0x%02x,0x%02x 0x%02x>", address, 0xff, 0xff, 0xff);
 	printf("[in read] send to motor=%s \n", str);
 	serial->Write(str);
-	Sleep(300);
+	//Sleep(300);
+	Sleep(50);
 	serial->ReadString(str, sizeof str);
 
 	if (strstr(str, "<EXOR RTOS V1.0>") != NULL) {
@@ -124,12 +126,13 @@ unsigned char MotorRead(CnComm *serial, unsigned char address) {
 
 	return 0;
 }
-
+extern U8 g_light_path_sign_on;
 void LightPathMdInitPos(CnComm *serial) {
 	int count = 0;
 	unsigned char lightPathSwitchReg = 0;
 	unsigned char lightPathSwithSign = 0;
-
+	int step = 5;
+	/*
 	lightPathSwitchReg = MotorRead(serial, 0x03);
 	if (lightPathSwitchReg & 0x01) {
 		// 用于标志马达复位时，光路的光电管是否被档
@@ -138,32 +141,33 @@ void LightPathMdInitPos(CnComm *serial) {
 	else {
 		lightPathSwithSign = 0;
 	}
-	if (lightPathSwithSign) { // 挡
-		while (lightPathSwithSign) { // 走直到不挡
-			LightPathMdMove(serial, 1, 0);
+	*/
+	if (g_light_path_sign_on) { // 挡
+		while (g_light_path_sign_on) { // 走直到不挡
+			LightPathMdMove(serial, step, 0);
 		}
-		while (!lightPathSwithSign) { // 走直到挡
-			LightPathMdMove(serial, 1, 1);
+		while (!g_light_path_sign_on) { // 走直到挡
+			LightPathMdMove(serial, step, 1);
 		}
-		while (lightPathSwithSign) { // 走直到不挡
-			LightPathMdMove(serial, 1, 0);
+		while (g_light_path_sign_on) { // 走直到不挡
+			LightPathMdMove(serial, step, 0);
 		}
-		while (!lightPathSwithSign) { // 走直到挡
-			LightPathMdMove(serial, 1, 1);
+		while (!g_light_path_sign_on) { // 走直到挡
+			LightPathMdMove(serial, step, 1);
 		}
 	}
 	else { // 不挡
-		while (!lightPathSwithSign) { //走直到挡
-			LightPathMdMove(serial, 1, 1);
+		while (!g_light_path_sign_on) { //走直到挡
+			LightPathMdMove(serial, step, 1);
 		}
-		while (lightPathSwithSign) { //走直到不挡
-			LightPathMdMove(serial, 1, 0);
+		while (g_light_path_sign_on) { //走直到不挡
+			LightPathMdMove(serial, step, 0);
 		}
-		while (!lightPathSwithSign) { //走直到挡
-			LightPathMdMove(serial, 1, 1);
+		while (!g_light_path_sign_on) { //走直到挡
+			LightPathMdMove(serial, step, 1);
 		}
-		while (lightPathSwithSign) { // 走直到不挡
-			LightPathMdMove(serial, 1, 0);
+		while (g_light_path_sign_on) { // 走直到不挡
+			LightPathMdMove(serial, step, 0);
 		}
 	}
 	LightPathMdStop(serial);//马达置0.拉低.

@@ -1,11 +1,7 @@
 #pragma once
 #include <windows.h>
 #include <string>
-#include "stdafx.h"
-#include "motor.h"
-#include "Printer.h"
-#include "video.h"
-#include "control.h"
+
 #include <process.h>
 #include <stdlib.h>
 #include <time.h>
@@ -14,6 +10,12 @@
 #include <assert.h>
 #include <chrono>
 #include <future>
+#include "stdafx.h"
+#include "motor.h"
+#include "Printer.h"
+#include "video.h"
+#include "control.h"
+#include "selective-search.h"
 typedef unsigned(__stdcall *PTHREEA_START) (void *);
 using namespace std;
 
@@ -177,11 +179,10 @@ int main(int argc, _TCHAR* argv[])
 
 	//printer test
 	//PrintTest();
-
+	//SelectiveSearch(argc, argv);
 	//DisplayImage();
 	//OpenCamera();
 	//WriteVideo();
-
 	//while (1);
 
 	CnComm *serial = new CnComm();

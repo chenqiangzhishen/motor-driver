@@ -1,4 +1,5 @@
 .vs
+.DS_Store
 motor-driver.vcxproj
 motor-driver.vcxproj.filters
 Debug

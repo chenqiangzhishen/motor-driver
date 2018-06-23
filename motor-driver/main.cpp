@@ -21,6 +21,7 @@ using namespace std;
 
 //光电开关开启表示没有挡住，关闭说明被挡住了
 U8 g_light_path_sign_on = 1;
+extern int faceDetect(int argc, const char** argv);
 
 DWORD WINAPI CommFBThread(LPVOID lpParam) {
 	// test 3. motor run left & right
@@ -168,7 +169,7 @@ DWORD WINAPI MotorReadWriteTestThread2(LPVOID lpParam) {
 }
 
 
-int main(int argc, _TCHAR* argv[])
+int main(int argc, const char* argv[])
 {
 	int size = 0;
 	int ret = 1;
@@ -183,7 +184,8 @@ int main(int argc, _TCHAR* argv[])
 	//DisplayImage();
 	//OpenCamera();
 	//WriteVideo();
-	//while (1);
+	faceDetect(argc, argv);
+	while (1);
 
 	CnComm *serial = new CnComm();
 

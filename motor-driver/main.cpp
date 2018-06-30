@@ -122,6 +122,26 @@ DWORD WINAPI Camera1Thread(LPVOID lpParam) {
 	printf("-----------camera 1 mode-------------end\n");
 }
 
+DWORD WINAPI WriteCamera0Thread(LPVOID lpParam) {
+	// test 3. motor run in parallel mode
+	printf("-----------write camera 0 mode-------------begin\n");
+	if (WriteVideo())
+		return -1;
+	else
+		return 0;
+	printf("-----------camera 0 mode-------------end\n");
+}
+
+DWORD WINAPI WriteCamera1Thread(LPVOID lpParam) {
+	// test 3. motor run in parallel mode
+	printf("-----------write camera 1 mode-------------begin\n");
+	if (WriteVideo1())
+		return -1;
+	else
+		return 0;
+	printf("-----------camera 1 mode-------------end\n");
+}
+
 DWORD WINAPI CheckSwitchSign(LPVOID lpParam) {
 	// test 3. motor run in parallel mode
 	printf("-----------parallel mode-------------begin\n");
@@ -184,8 +204,9 @@ int main(int argc, const char* argv[])
 	//DisplayImage();
 	//OpenCamera();
 	//WriteVideo();
-	faceDetect(argc, argv);
-	while (1);
+	//WriteVideo1();
+	//faceDetect(argc, argv);
+	//while (1);
 
 	CnComm *serial = new CnComm();
 
@@ -214,12 +235,14 @@ int main(int argc, const char* argv[])
 	//set power 5v on
 	//Power5V(serial, 2);
 
-	HANDLE m_hCamera0 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)Camera0Thread, NULL, 0, NULL);
-	HANDLE m_hCamera1 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)Camera1Thread, NULL, 0, NULL);
-	HANDLE m_hCheckSwitchSign = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CheckSwitchSign, (LPVOID)serial, 0, NULL);
+	//HANDLE m_hCamera0 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)Camera0Thread, NULL, 0, NULL);
+	//HANDLE m_hCamera1 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)Camera1Thread, NULL, 0, NULL);
+	HANDLE m_hWriteCamera0 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)WriteCamera0Thread, NULL, 0, NULL);
+	HANDLE m_hWriteCamera1 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)WriteCamera1Thread, NULL, 0, NULL);
+	//HANDLE m_hCheckSwitchSign = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CheckSwitchSign, (LPVOID)serial, 0, NULL);
 
 	// if want run motor in parallel, enable this thread.
-	HANDLE m_hThreadMotorParallelMove = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommMotorParallelMoveThread, (LPVOID)serial, 0, NULL);
+	//HANDLE m_hThreadMotorParallelMove = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommMotorParallelMoveThread, (LPVOID)serial, 0, NULL);
 
 	//LEFT&RIGHT
 	//HANDLE m_hThreadLR = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CommLRThread, (LPVOID)serial, 0, NULL);

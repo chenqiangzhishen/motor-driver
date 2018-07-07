@@ -103,6 +103,17 @@ DWORD WINAPI CommMotorParallelMoveThread(LPVOID lpParam) {
 	return 0;
 }
 
+
+DWORD WINAPI TouchScreenThread(LPVOID lpParam) {
+	// test 3. motor run in parallel mode
+	printf("-----------touchscreen button click position-------------begin\n");
+	if (touchTest())
+		return -1;
+	else
+		return 0;
+	printf("-----------touchscreen -------------end\n");
+}
+
 DWORD WINAPI Camera0Thread(LPVOID lpParam) {
 	// test 3. motor run in parallel mode
 	printf("-----------camera 0 mode-------------begin\n");
@@ -208,7 +219,7 @@ int main(int argc, const char* argv[])
 	//WriteVideo1();
 	//faceDetect(argc, argv);
 	//while (1);
-	touchTest();
+	//touchTest();
 
 	CnComm *serial = new CnComm();
 
@@ -237,10 +248,11 @@ int main(int argc, const char* argv[])
 	//set power 5v on
 	//Power5V(serial, 2);
 
-	//HANDLE m_hCamera0 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)Camera0Thread, NULL, 0, NULL);
+	HANDLE m_hTouchScreen = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)TouchScreenThread, NULL, 0, NULL);
+	HANDLE m_hCamera0 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)Camera0Thread, NULL, 0, NULL);
 	//HANDLE m_hCamera1 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)Camera1Thread, NULL, 0, NULL);
-	HANDLE m_hWriteCamera0 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)WriteCamera0Thread, NULL, 0, NULL);
-	HANDLE m_hWriteCamera1 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)WriteCamera1Thread, NULL, 0, NULL);
+	//HANDLE m_hWriteCamera0 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)WriteCamera0Thread, NULL, 0, NULL);
+	//HANDLE m_hWriteCamera1 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)WriteCamera1Thread, NULL, 0, NULL);
 	//HANDLE m_hCheckSwitchSign = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)CheckSwitchSign, (LPVOID)serial, 0, NULL);
 
 	// if want run motor in parallel, enable this thread.

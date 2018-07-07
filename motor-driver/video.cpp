@@ -1,4 +1,6 @@
+#pragma once
 #include "definition-detect.h"
+
 
 int DisplayImage()
 {
@@ -103,8 +105,12 @@ int OpenCamera0()
 	{
 		Mat frame;
 		double meanValue = 0.0;
+		std::string position;
+		POINT pt = getLeftButtonPosition();
+		position = "x=" + std::to_string(pt.x) + ",y=" + std::to_string(pt.y);
 		capture >> frame;
-		putText(frame, "nce-8900k", Point(10, 30), FONT_HERSHEY_PLAIN, 2.0, Scalar(0, 0, 255), 2, LINE_AA);
+		putText(frame, "nce-8900k", Point(10, 30), CV_FONT_HERSHEY_COMPLEX, 0.8, Scalar(0, 0, 255), 2);
+		putText(frame, position, Point(10, 90), CV_FONT_HERSHEY_COMPLEX, 0.8, Scalar(0, 255, 0), 2);
 		meanValue = DefinitionDetect(frame);
 		cv::rectangle(
 			frame,

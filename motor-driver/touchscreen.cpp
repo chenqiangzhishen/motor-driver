@@ -11,7 +11,7 @@ POINT getLeftButtonPosition(void)
 	return pt;
 }
 
-void touchTest(void) {
+int touchTest(void) {
 
 	getLeftButtonPosition();
 	while (1)
@@ -23,4 +23,5 @@ void touchTest(void) {
 		if (c == 27)
 			break;
 	}
+	return 0;
 }

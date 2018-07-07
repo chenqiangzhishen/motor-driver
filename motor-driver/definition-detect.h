@@ -3,6 +3,8 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include "touchscreen.h"
+
 #define DEFINITION_THRESHOLD 1
 #define BIN_DIV 120
 

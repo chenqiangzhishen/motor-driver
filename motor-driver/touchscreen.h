@@ -5,4 +5,4 @@
 #include <opencv2/highgui/highgui.hpp>
 
 extern POINT getLeftButtonPosition(void);
-void touchTest(void);
+int touchTest(void);

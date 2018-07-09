@@ -1,7 +1,6 @@
 #pragma once
 #include <windows.h>
 #include <string>
-
 #include <process.h>
 #include <stdlib.h>
 #include <time.h>
@@ -16,7 +15,7 @@
 #include "video.h"
 #include "control.h"
 #include "selective-search.h"
-#include "touchscreen.h"
+
 typedef unsigned(__stdcall *PTHREEA_START) (void *);
 using namespace std;
 
@@ -101,17 +100,6 @@ DWORD WINAPI CommMotorParallelMoveThread(LPVOID lpParam) {
 	}
 	printf("-----------parallel mode-------------end\n");
 	return 0;
-}
-
-
-DWORD WINAPI TouchScreenThread(LPVOID lpParam) {
-	// test 3. motor run in parallel mode
-	printf("-----------touchscreen button click position-------------begin\n");
-	if (touchTest())
-		return -1;
-	else
-		return 0;
-	printf("-----------touchscreen -------------end\n");
 }
 
 DWORD WINAPI Camera0Thread(LPVOID lpParam) {
@@ -248,7 +236,6 @@ int main(int argc, const char* argv[])
 	//set power 5v on
 	//Power5V(serial, 2);
 
-	HANDLE m_hTouchScreen = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)TouchScreenThread, NULL, 0, NULL);
 	HANDLE m_hCamera0 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)Camera0Thread, NULL, 0, NULL);
 	//HANDLE m_hCamera1 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)Camera1Thread, NULL, 0, NULL);
 	//HANDLE m_hWriteCamera0 = (HANDLE)_beginthreadex(NULL, 0, (PTHREEA_START)WriteCamera0Thread, NULL, 0, NULL);

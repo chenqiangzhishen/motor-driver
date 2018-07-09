@@ -100,25 +100,38 @@ int OpenCamera0()
 		cout << "camera 0 opened with failure, it doesn't work?" << endl;
 		return -1;
 	}
-
+	bool flag = true;
 	while (true)
 	{
 		Mat frame;
 		double meanValue = 0.0;
 		std::string position;
+
 		POINT pt = getLeftButtonPosition();
 		position = "x=" + std::to_string(pt.x) + ",y=" + std::to_string(pt.y);
 		capture >> frame;
 		putText(frame, "nce-8900k", Point(10, 30), CV_FONT_HERSHEY_COMPLEX, 0.8, Scalar(0, 0, 255), 2);
 		putText(frame, position, Point(10, 90), CV_FONT_HERSHEY_COMPLEX, 0.8, Scalar(0, 255, 0), 2);
 		meanValue = DefinitionDetect(frame);
-		cv::rectangle(
-			frame,
-			cv::Point(150, 180),
-			cv::Point(450, 380),
-			meanValue > DEFINITION_THRESHOLD ? cv::Scalar(0, 255, 0): cv::Scalar(255, 0, 0),
-			5, 8
-		);
+
+		if (flag) {
+			Mat image = imread("..\\photoes\\focus.png");
+			if (!image.data)
+			{
+				std::cout << "open image error" << endl;
+				return -1;
+			}
+			Mat imROI;
+			imROI = frame(Rect(200, 200, image.cols, image.rows));
+			Mat mask = imread("..\\photoes\\focus.png", 0);
+			image.copyTo(imROI, mask);
+			flag = false;
+		}
+		else
+		{
+			flag = true;
+			Sleep(100);
+		}
 		imshow("read video 0", frame);
 		//delay for 30
 		waitKey(30);

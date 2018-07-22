@@ -15,6 +15,7 @@
 #include "video.h"
 #include "control.h"
 #include "selective-search.h"
+#include "get-focus.h"
 
 typedef unsigned(__stdcall *PTHREEA_START) (void *);
 using namespace std;
@@ -206,7 +207,8 @@ int main(int argc, const char* argv[])
 	//WriteVideo();
 	//WriteVideo1();
 	//faceDetect(argc, argv);
-	//while (1);
+	getFocus();
+	while (1);
 	//touchTest();
 
 	CnComm *serial = new CnComm();
